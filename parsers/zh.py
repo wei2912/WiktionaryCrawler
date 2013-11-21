@@ -44,10 +44,6 @@ def parse(page, htmldoc):
 	spelings = []
 	state = 0 # haven't found header
 	for line in textdoc:
-		if state == 3:
-			if not line.startswith("### "):
-				continue
-
 		if line.startswith("### "): # found header; overrides everything
 			heading = line.strip("### ")
 			postag = heading.lower().encode("utf8")
