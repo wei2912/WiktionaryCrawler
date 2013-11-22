@@ -19,6 +19,9 @@ def parse(page, htmldoc):
 	pinyin_regex = r"(?P<ts>traditional|simplified|traditional and simplified), Pinyin (?P<pinyin>.+?)(?:, (?:simplified|traditional) .+?)?\)"
 	pinyin_regex = re.compile(pinyin_regex)
 
+	pinyin_regex2 = r"\((?P<pinyin>\S+? or \S+?)\)"
+	pinyin_regex2 = re.compile(pinyin_regex2)
+
 	soup = BeautifulSoup(htmldoc)
 	soup = strip_out_headings(soup, htmldoc, "h2", "Mandarin", 1)
 	tags = [
@@ -57,20 +60,25 @@ def parse(page, htmldoc):
 
 	for line in textdoc:
 		search = pinyin_regex.search(line)
+		search2 = pinyin_regex2.search(line)
 
 		if line.startswith("### "): # found header; overrides everything
 			heading = line[4:].lower().encode("utf8")
 			postag = shortify(heading)
 			print("* POS tag: %s" % postag)
-		elif search: # found pinyin
-			groupdict = search.groupdict()
-			if groupdict["ts"] == "traditional" and config.zh_s:
-				print("* Is traditional, returning.")
-				return []
-			if groupdict["ts"] == "simplified" and config.zh_t:
-				print("* Is simplified, returning.")
-				return []
-			pinyin = groupdict["pinyin"].encode("utf8")
+		elif search or search2: # found pinyin
+			if search:
+				groupdict = search.groupdict()
+				if groupdict["ts"] == "traditional" and config.zh_s:
+					print("* Is traditional, returning.")
+					return []
+				if groupdict["ts"] == "simplified" and config.zh_t:
+					print("* Is simplified, returning.")
+					return []
+				pinyin = groupdict["pinyin"].encode("utf8")
+			elif search2:
+				groupdict = search2.groupdict()
+				pinyin = groupdict["pinyin"].encode("utf8")
 			print("* Pinyin: %s" % pinyin)
 		elif line.startswith("* "): # found english
 			english = line[2:].encode("utf8")

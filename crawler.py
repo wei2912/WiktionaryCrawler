@@ -50,19 +50,17 @@ def crawl_pages(category, subcats):
 				f.write(page + "\n")
 			f.close()
 
-		crawl_all_pages(category, subcat_pages)
 		pages.extend(subcat_pages)
 	return pages
 
-def crawl_all_pages(category, pages):
-	dirpath = "data/pages/%s/" % category
+def crawl_all_pages(pages):
+	dirpath = "data/pages/"
 	counter = 1
 	for page in pages:
 		print("Progress: %d/%d" % (counter, len(pages)))
 		counter += 1
 
 		if "appendix" in page.lower():
-			print("* Page is appendix, skipping.")
 			continue
 
 		if not os.path.exists(dirpath + page + ".html"):
@@ -83,16 +81,6 @@ def get_subcats(category):
 	subcatlist = xmldoc.getElementsByTagName('cm')
 	subcats = [subcat.attributes['title'].value.encode("utf8") for subcat in subcatlist]
 
-	if len(subcats) == 0:
-		print("* Found no subcategories in %s." % category)
-		print("")
-		return []
-
-	print("* Found the following subcategories in %s:" % category)
-	for subcat in subcats:
-		print("** %s" % subcat)
-	print("")
-
 	return subcats
 
 def get_pages(subcat):
@@ -106,16 +94,6 @@ def get_pages(subcat):
 	pagelist = xmldoc.getElementsByTagName('cm')
 	pages = [page.attributes['title'].value.encode("utf8") for page in pagelist]
 
-	if len(pages) == 0:
-		print("* Found no pages in %s." % subcat)
-		print("")
-		return []
-
-	print("* Found the following pages in %s:" % subcat)
-	for page in pages:
-		print("** %s" % page)
-	print("")
-
 	return pages
 
 def get_xml(params):
@@ -126,7 +104,6 @@ def get_xml(params):
 
 	# We're permitted to crawl any page with the API regardless
 	# of robots.txt since we're using the API
-	print("Crawling %s" % url)
 	response = urllib2.urlopen(url)
 
 	time.sleep(config.crawl_delay)
@@ -138,7 +115,6 @@ def get_html(page):
 
 	# we should be able to crawl any page from the links we obtained
 	# and we're obeying crawling delays here
-	print("Crawling %s" % url)
 	response = urllib2.urlopen(url.encode("utf8"))
 
 	time.sleep(config.crawl_delay)

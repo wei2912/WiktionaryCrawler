@@ -12,7 +12,8 @@ if config.lang == "zh":
 def parse(pages):
 	spelings = []
 
-	dirpath = "data/pages/%s/" % config.start_cat
+	pages_dirpath = "data/pages/%s/" % config.start_cat
+	speling_dirpath = "data/speling/%s/" % config.start_cat
 	counter = 1
 	for page in pages:
 		print("Progress: %d/%d" % (counter, len(pages)))
@@ -22,20 +23,22 @@ def parse(pages):
 			print("* Page is appendix, skipping.")
 			continue
 
-		if os.path.exists(dirpath + page + ".txt"):
-			f = open(dirpath + page + ".txt", 'r')
+		if os.path.exists(speling_dirpath + page + ".txt"):
+			f = open(speling_dirpath + page + ".txt", 'r')
 			speling_list = f.read().strip("\n").split("\n")
 			f.close()
 		else:
-			f = open(dirpath + page + ".html", 'r')
+			f = open(pages_dirpath + page + ".html", 'r')
 			htmldoc = f.read()
+			f.close()
+			
 			speling_list = parser.parse(page, htmldoc)
 
 			if len(speling_list) == 0:
 				print("* No speling info could be derived.")
 				print("")
 
-			f = open(dirpath + page + ".txt", 'w')
+			f = open(speling_dirpath + page + ".txt", 'w')
 			for speling in speling_list:
 				f.write(speling + "\n")
 			f.close()

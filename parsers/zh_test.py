@@ -9,6 +9,7 @@ class TestSequenceFunctions(unittest.TestCase):
         self.parse_word("好")
         self.parse_word("LKK")
         self.parse_word("便当")
+        self.parse_word("几个")
 
     def parse_word(self, word):
         htmldoc = open("zh_tests/%s.html" % word, "r").read()

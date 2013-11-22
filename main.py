@@ -13,15 +13,19 @@ def main():
 		os.mkdir("data/site/")
 	if not os.path.exists("data/pages/"):
 		os.mkdir("data/pages/")
+	if not os.path.exists("data/speling/"):
+		os.mkdir("data/speling/")
 
 	# stage 1 - obtaining list of words to crawl
-	#         - and crawling each of them
 	pages = OrderedDict.fromkeys(crawler.crawl()).keys() # unique
 
-	# stage 2 - parsing (scraping) all pages
+	# stage 2 - crawling all pages
+	crawler.crawl_all_pages(pages)
+
+	# stage 3 - parsing (scraping) all pages
 	spelings = parser.parse(pages)
 
-	# stage 3 - write to file
+	# stage 4 - write to file
 	f = open("data/speling.txt", "w")
 	for speling in spelings:
 		f.write(speling + "\n")
