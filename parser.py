@@ -10,12 +10,9 @@ if config.lang == "zh":
 ## the list goes on
 
 def parse(pages):
-	if not os.path.exists("data/pages/"):
-		os.mkdir("data/pages/")
-
 	spelings = []
 
-	dirpath = "data/pages/"
+	dirpath = "data/pages/%s/" % config.start_cat
 	counter = 1
 	for page in pages:
 		print("Progress: %d/%d" % (counter, len(pages)))
@@ -30,7 +27,8 @@ def parse(pages):
 			speling_list = f.read().strip("\n").split("\n")
 			f.close()
 		else:
-			htmldoc = get_html(page)
+			f = open(dirpath + page + ".html", 'r')
+			htmldoc = f.read()
 			speling_list = parser.parse(page, htmldoc)
 
 			if len(speling_list) == 0:
@@ -42,13 +40,5 @@ def parse(pages):
 				f.write(speling + "\n")
 			f.close()
 		spelings.extend(speling_list)
+	return spelings
 
-def get_html(page):
-	url = "http://en.wiktionary.org/wiki/%s?action=render" % page
-	url = urlnorm.norm(url)
-
-	print("Crawling %s" % url)
-	response = urllib2.urlopen(url.encode("utf8"))
-
-	time.sleep(config.crawl_delay)
-	return response.read()

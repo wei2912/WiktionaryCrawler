@@ -7,9 +7,6 @@ import os
 import urlnorm
 
 def crawl():
-	if not os.path.exists("data/site/"):
-		os.mkdir("data/site/")
-
 	subcats = crawl_subcats(config.start_cat)
 	pages = crawl_pages(config.start_cat, subcats)
 	return pages
@@ -53,8 +50,27 @@ def crawl_pages(category, subcats):
 				f.write(page + "\n")
 			f.close()
 
+		crawl_all_pages(category, subcat_pages)
 		pages.extend(subcat_pages)
 	return pages
+
+def crawl_all_pages(category, pages):
+	dirpath = "data/pages/%s/" % category
+	counter = 1
+	for page in pages:
+		print("Progress: %d/%d" % (counter, len(pages)))
+		counter += 1
+
+		if "appendix" in page.lower():
+			print("* Page is appendix, skipping.")
+			continue
+
+		if not os.path.exists(dirpath + page + ".html"):
+			f = open(dirpath + page + ".html", 'w')
+			htmldoc = get_html(page)
+			f.write(htmldoc)
+			f.close()
+
 
 def get_subcats(category):
 	xml = get_xml({"action": "query", 
@@ -75,7 +91,7 @@ def get_subcats(category):
 	print("* Found the following subcategories in %s:" % category)
 	for subcat in subcats:
 		print("** %s" % subcat)
-		print("")
+	print("")
 
 	return subcats
 
@@ -112,6 +128,18 @@ def get_xml(params):
 	# of robots.txt since we're using the API
 	print("Crawling %s" % url)
 	response = urllib2.urlopen(url)
+
+	time.sleep(config.crawl_delay)
+	return response.read()
+
+def get_html(page):
+	url = "http://en.wiktionary.org/wiki/%s?action=render" % page
+	url = urlnorm.norm(url)
+
+	# we should be able to crawl any page from the links we obtained
+	# and we're obeying crawling delays here
+	print("Crawling %s" % url)
+	response = urllib2.urlopen(url.encode("utf8"))
 
 	time.sleep(config.crawl_delay)
 	return response.read()
