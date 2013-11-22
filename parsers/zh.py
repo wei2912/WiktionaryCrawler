@@ -4,6 +4,21 @@ import re
 from bs4 import BeautifulSoup, NavigableString
 
 def parse(page, htmldoc):
+	print("* Crawling %s.html" % page)
+
+	spelings = []
+
+	word = page
+	postag = ""
+	pinyin = ""
+	english = ""
+
+	abbrv_regex = r"^[A-Z]+$"
+	abbrv_regex = re.compile(abbrv_regex)
+
+	pinyin_regex = r"(?P<ts>traditional|simplified|traditional and simplified), Pinyin (?P<pinyin>.+?)(?:, (?:simplified|traditional) .+?)?\)"
+	pinyin_regex = re.compile(pinyin_regex)
+
 	soup = BeautifulSoup(htmldoc)
 	soup = strip_out_headings(soup, htmldoc, "h2", "Mandarin", 1)
 	tags = [
@@ -17,61 +32,70 @@ def parse(page, htmldoc):
 	soup = get_tag_content(soup, tags)
 	tags = [
 	"dd",
-	"dl"
+	"dl",
+	"ul"
 	]
 	soup = strip_tags(soup, tags)
-	soup = strip_out_headings(soup, htmldoc, "h3", "Pronunciation", 0)
-	soup = format_headings(soup)
 	
-	textdoc = [line.strip() for line in soup.get_text().split("\n")]
-	textdoc = [line for line in textdoc if line != ""]
-
-	abbrv_regex = r"^[A-Z]+$"
-	abbrv_regex = re.compile(abbrv_regex)
+	soup = strip_out_headings(soup, htmldoc, "h3", "Pronunciation", 0)
+	soup = strip_out_headings(soup, htmldoc, "h3", "Hanzi", 0)
+	soup = strip_out_headings(soup, htmldoc, "h3", "Affix", 0)
+	soup = strip_out_headings(soup, htmldoc, "h3", "Prefix", 0)
+	soup = strip_out_headings(soup, htmldoc, "h3", "References", 0)
 
 	if abbrv_regex.match(page): # abbreviations
-		postag = "abbr"
+		soup = strip_out_headings(soup, htmldoc, "h3", "Initialism", 1)
+		postag = "abbrv"
 		pinyin = "none"
 
-	pinyin_regex = r"Pinyin (.+?)\)"
-	pinyin_regex = re.compile(pinyin_regex)
+	soup = format_headings(soup)
+	soup = format_ol(soup)
 
-	word = page
-	postag = ""
-	pinyin = ""
-	english = ""
+	textdoc = [line.strip() for line in soup.get_text().split("\n")]
+	textdoc = [line for line in textdoc if line != ""]
+	textdoc = [line.replace("####", "###") for line in textdoc] # h4 to h3
 
-	spelings = []
-	state = 0 # haven't found header
 	for line in textdoc:
+		search = pinyin_regex.search(line)
+
 		if line.startswith("### "): # found header; overrides everything
-			heading = line.strip("### ")
-			postag = heading.lower().encode("utf8")
-
+			heading = line[4:].lower().encode("utf8")
+			postag = shortify(heading)
 			print("* POS tag: %s" % postag)
-
-			state = 1 # found header
-		elif state == 1:
-			search = pinyin_regex.search(line)
-			if search:
-				pinyin = search.groups()[0].encode("utf8")
-				print("* Pinyin: %s" % pinyin)
-
-				state = 2 # found pinyin
-		elif state == 2:
-			english = line.encode("utf8")
+		elif search: # found pinyin
+			groupdict = search.groupdict()
+			if groupdict["ts"] == "traditional" and config.zh_s:
+				print("* Is traditional, returning.")
+				return []
+			if groupdict["ts"] == "simplified" and config.zh_t:
+				print("* Is simplified, returning.")
+				return []
+			pinyin = groupdict["pinyin"].encode("utf8")
+			print("* Pinyin: %s" % pinyin)
+		elif line.startswith("* "): # found english
+			english = line[2:].encode("utf8")
 			print("* English: %s" % english)
-			state = 1
 
 			if word and postag and pinyin and english:
 				speling = "%s ; %s ; %s ; %s" % (word, postag, pinyin, english)
 				print("** speling: %s" % speling)
+				print("")
 				spelings.append(speling)
-				print(spelings)
 			else:
 				raise Exception("Data missing!")
-	print(spelings)
 	return spelings
+
+def shortify(postag):
+	shortify_tags = {
+	"adjective": "adj",
+	"adverb": "adv",
+	"conjunction": "conj",
+	"interjection": "interj",
+	"measure word": "mw",
+	}
+	if postag in shortify_tags:
+		return shortify_tags[postag]
+	return postag
 
 def get_tag_content(soup, tags):
 	for tag in soup.findAll(True):
@@ -107,6 +131,8 @@ def strip_out_headings(soup, htmldoc, h_level, strip_heading, index):
 
 	if i+1 < len(headings): # i+1 is not over the max
 		next_head = headings[i+1]
+	else:
+		next_head = None
 
 	# strip off everything other than what we want
 	htmldoc = unicode(soup)
@@ -116,7 +142,7 @@ def strip_out_headings(soup, htmldoc, h_level, strip_heading, index):
 		htmldoc = htmldoc.split(cur_head)[index]
 	else:
 		if index == 0:
-			htmldoc = htmldoc.split(cur_head)[0] + htmldoc.split(next_head)[1]
+			htmldoc = htmldoc.split(cur_head)[0] + next_head + htmldoc.split(next_head)[1]
 		elif index == 1:
 			htmldoc = htmldoc.split(cur_head)[1].split(next_head)[0]
 
@@ -150,4 +176,10 @@ def format_headings(soup):
 			format = "#"
 			format *= level 
 			heading.replace_with("%s %s" % (format, heading.text))
+	return soup
+
+def format_ol(soup):
+	for ol in soup.findAll("ol"):
+		for li in ol.findAll("li"):
+			li.replace_with("* %s" % li.text)
 	return soup

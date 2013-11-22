@@ -1,2 +1,2 @@
-好 ; adjective ; hǎo ; good, well
-好 ; adjective ; hào ; be fond of
+好 ; adj ; hǎo ; good, well
+好 ; adj ; hào ; be fond of

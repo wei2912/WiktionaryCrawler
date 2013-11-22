@@ -5,18 +5,16 @@ import unittest
 
 class TestSequenceFunctions(unittest.TestCase):
     def test_parse(self):
-        page = "啊"
-        htmldoc = open("zh_tests/啊.html", "r").read()
+        self.parse_word("啊")
+        self.parse_word("好")
+        self.parse_word("LKK")
+        self.parse_word("便当")
 
-        spelings = zh.parse(page, htmldoc)
-        correct_spelings = open("zh_tests/啊.txt", "r").read().strip("\n").split("\n")
-        self.assertEqual(spelings, correct_spelings)
+    def parse_word(self, word):
+        htmldoc = open("zh_tests/%s.html" % word, "r").read()
 
-        page = "好"
-        htmldoc = open("zh_tests/好.html", "r").read()
-
-        spelings = zh.parse(page, htmldoc)
-        correct_spelings = open("zh_tests/好.txt", "r").read().strip("\n").split("\n")
+        spelings = zh.parse(word, htmldoc)
+        correct_spelings = open("zh_tests/%s.txt" % word, "r").read().strip("\n").split("\n")
         self.assertEqual(spelings, correct_spelings)
 
 if __name__ == '__main__':
