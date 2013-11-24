@@ -8,7 +8,7 @@ Depending on your language, you may need to install more dependencies.
 
 Here are the list of language specific dependencies:
 
-* ***zh***: `sudo pip install mafan`
+* **zh**: `sudo pip install mafan`
 
 # Stages
 
@@ -17,8 +17,11 @@ The crawler goes through 4 stages.
 ## Stage 1: Obtaining list of pages to crawl.
 
 1) The crawler looks for sub-categories in a starting category (`config.start_cat`) and records them down in `data/site/start_cat/subcats.txt`. Any sub-categories blacklisted will not be included.
-2) The crawler then crawls the sub-categories for pages and records them down in `data/site/start_cat/subcat/pages.txt`. Any pages blacklisted will not be included. 
+
+2) The crawler then crawls the sub-categories for pages and records them down in `data/site/start_cat/subcat/pages.txt`. Any pages blacklisted will not be included.
+
 	* More information can be found at [Filters](https://github.com/wei2912/WiktionaryCrawler#filters).
+
 3) These pages are then added to a list of pages which will then be crawled at the next stage.
 
 ## Stage 2: Crawling all pages in list.
@@ -30,11 +33,13 @@ The crawler goes through 4 stages.
 ## Stage 3: Parsing all pages in list.
 
 1) The parser goes through every page in the list and parses it based on the language.
+
 	* More information can be found at [Parsers](https://github.com/wei2912/WiktionaryCrawler#parsers).
 
 ## Stage 4: Writing final results to file.
 
 1) All spelings are written to `data/spelings.txt`
+
 2) The program terminates with statistics.
 
 # Filters
@@ -45,7 +50,7 @@ At stage 2, pages can be filtered out by plugins based on language. Here is the 
 	* Pages are filtered out based on whether the word is simplified, traditional or both.
 	* This can be set in `config.py`.
 
-Filters are stored in `filters/`. Every filter has a test suite which goes by the filename "filter_test.py". This test suite can be runned to check if the filter has any errors.
+Filters are stored in `filters/`. Every filter has a test suite which goes by the filename `filter_test.py`. This test suite can be runned to check if the filter has any errors.
 
 # Parsers
 
@@ -56,7 +61,7 @@ At stage 3, pages are parsed based on language. Here is the list of parsers:
 
 The parser is automatically selected based on the language set in `config.py`. More information can be found at [General Config](https://github.com/wei2912/WiktionaryCrawler#general-config)
 
-Parsers are stored in `parsers/`. Every parser has a test suite which goes by the filename "parser_test.py". This test suite can be runned to check if the parser has any errors.
+Parsers are stored in `parsers/`. Every parser has a test suite which goes by the filename `parser_test.py`. This test suite can be runned to check if the parser has any errors.
 
 # General Config
 
@@ -91,9 +96,9 @@ The top comment, `# coding=utf8`, is required to set the encoding of the file so
 
 ## `start_cat`
 
-`start_cat` is the category where the crawler begins crawling for sub-categories. Refer to [Stage 1](https://github.com/wei2912/WiktionaryCrawler#stage-1:-obtaining-list-of-pages-to-crawl.) for more details.
+`start_cat` is the category where the crawler begins crawling for sub-categories. Refer to [Stage 1](https://github.com/wei2912/WiktionaryCrawler#stage-1-obtaining-list-of-pages-to-crawl) for more details.
 
-The default value is "Category:Mandarin_language". Adapt this to the language which you wish to crawl. Remember to modify `lang` as well.
+The default value is `Category:Mandarin_language`. Adapt this to the language which you wish to crawl. Remember to modify `lang` as well.
 
 ## `crawl_delay`
 
@@ -107,7 +112,7 @@ The crawl delay is in seconds.
 
 The default value is `zh`. The following languages are supported:
 
-* zh
+* **zh**
 
 ## `wiki_lang`
 
