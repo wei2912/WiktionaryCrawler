@@ -1,4 +1,5 @@
 import config
+import pb
 
 import urllib2
 import urlnorm
@@ -14,14 +15,10 @@ def parse(pages):
 
 	pages_dirpath = "data/pages/%s/" % config.start_cat
 	speling_dirpath = "data/speling/%s/" % config.start_cat
-	counter = 1
+	counter = 0
 	for page in pages:
-		print("Progress: %d/%d" % (counter, len(pages)))
 		counter += 1
-
-		if "appendix" in page.lower():
-			print("* Page is appendix, skipping.")
-			continue
+		pb.update(counter*100/len(pages))
 
 		if os.path.exists(speling_dirpath + page + ".txt"):
 			f = open(speling_dirpath + page + ".txt", 'r')
@@ -31,12 +28,8 @@ def parse(pages):
 			f = open(pages_dirpath + page + ".html", 'r')
 			htmldoc = f.read()
 			f.close()
-			
-			speling_list = parser.parse(page, htmldoc)
 
-			if len(speling_list) == 0:
-				print("* No speling info could be derived.")
-				print("")
+			speling_list = parser.parse(page, htmldoc)
 
 			f = open(speling_dirpath + page + ".txt", 'w')
 			for speling in speling_list:

@@ -1,4 +1,5 @@
 import config
+import pb
 
 from xml.dom import minidom
 import urllib2
@@ -8,7 +9,9 @@ import urlnorm
 
 def crawl():
 	subcats = crawl_subcats(config.start_cat)
+	subcats = [subcat for subcat in subcats if not config.subcat_bl(subcat)]
 	pages = crawl_pages(config.start_cat, subcats)
+	pages = [page for page in pages if not config.page_bl(page)]
 	return pages
 
 def crawl_subcats(category):
@@ -21,7 +24,6 @@ def crawl_subcats(category):
 	else:
 		subcats = get_subcats(category)
 
-		os.mkdir(dirpath)
 		f = open(dirpath + "subcats.txt", 'w')
 		for subcat in subcats:
 			f.write(subcat + "\n")
@@ -30,10 +32,10 @@ def crawl_subcats(category):
 
 def crawl_pages(category, subcats):
 	pages = []
-	counter = 1
+	counter = 0
 	for subcat in subcats:
-		print("Progress: %d/%d" % (counter, len(subcats)))
 		counter += 1
+		pb.update(counter*100/len(subcats))
 
 		dirpath = "data/site/%s/%s/" % (category, subcat)
 
@@ -44,7 +46,6 @@ def crawl_pages(category, subcats):
 		else:
 			subcat_pages = get_pages(subcat)
 
-			os.mkdir(dirpath)
 			f = open(dirpath + "pages.txt", 'w')
 			for page in subcat_pages:
 				f.write(page + "\n")
@@ -54,11 +55,11 @@ def crawl_pages(category, subcats):
 	return pages
 
 def crawl_all_pages(pages):
-	dirpath = "data/pages/"
-	counter = 1
+	dirpath = "data/pages/%s/" % config.start_cat
+	counter = 0
 	for page in pages:
-		print("Progress: %d/%d" % (counter, len(pages)))
 		counter += 1
+		pb.update(counter*100/len(pages))
 
 		if "appendix" in page.lower():
 			continue
@@ -68,7 +69,6 @@ def crawl_all_pages(pages):
 			htmldoc = get_html(page)
 			f.write(htmldoc)
 			f.close()
-
 
 def get_subcats(category):
 	xml = get_xml({"action": "query", 
