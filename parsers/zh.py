@@ -2,24 +2,19 @@ import config
 
 import re
 from bs4 import BeautifulSoup, NavigableString
-import mafan
-from mafan import text
 from collections import OrderedDict
+from mafan import text
 
 def parse(page, htmldoc):
-	simplified = text.simplify(page) == page.decode("utf8")
-	traditional = text.tradify(page) == page.decode("utf8")
-	if simplified and not traditional and not config.zh_s:
-		return []
-	if traditional and not simplified and not config.zh_t:
-		return []
-
 	spelings = []
 
 	word = page
 	postag = ""
 	pinyin = ""
 	english = ""
+
+	if text.contains_latin(page): # contains latin; no pinyin
+		pinyin = "none"
 
 	abbrv_regex = r"^[A-Z]+$"
 	abbrv_regex = re.compile(abbrv_regex)
@@ -44,9 +39,6 @@ def parse(page, htmldoc):
 
 	soup = strip_out_section(soup, htmldoc, "h2", "Mandarin", 1)
 	soup = strip_out_section(soup, htmldoc, "h3", "Romanization", 0)
-
-	if text.contains_latin(page): # contains latin; no pinyin
-		pinyin = "none"
 
 	soup = format_headings(soup) # marks out sections
 	soup = format_ol(soup) # marks out english

@@ -1,4 +1,4 @@
-import config
+import config, lang
 import pb
 
 import urllib2
@@ -6,15 +6,11 @@ import urlnorm
 import os
 import time
 
-if config.lang == "zh":
-	from parsers import zh as parser
-## the list goes on
-
 def parse(pages):
 	spelings = []
 
-	pages_dirpath = "data/pages/%s/" % config.start_cat
-	speling_dirpath = "data/speling/%s/" % config.start_cat
+	pages_dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
+	speling_dirpath = "data/speling/%s/%s/" % (config.wiki_lang, config.start_cat)
 	counter = 0
 	for page in pages:
 		counter += 1
@@ -29,7 +25,7 @@ def parse(pages):
 			htmldoc = f.read()
 			f.close()
 
-			speling_list = parser.parse(page, htmldoc)
+			speling_list = lang.parse(page, htmldoc)
 
 			f = open(speling_dirpath + page + ".txt", 'w')
 			for speling in speling_list:

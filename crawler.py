@@ -1,5 +1,4 @@
-import config
-import pb
+import config, lang, pb, misc
 
 from xml.dom import minidom
 import urllib2
@@ -7,15 +6,17 @@ import time
 import os
 import urlnorm
 
+
 def crawl():
 	subcats = crawl_subcats(config.start_cat)
 	subcats = [subcat for subcat in subcats if not config.subcat_bl(subcat)]
 	pages = crawl_pages(config.start_cat, subcats)
-	pages = [page for page in pages if not config.page_bl(page)]
+	pages = [page for page in pages if not config.page_bl(page) and lang.can(page)]
 	return pages
 
 def crawl_subcats(category):
-	dirpath = "data/site/%s/" % category
+	dirpath = "data/site/%s/%s/" % (config.wiki_lang, category)
+	misc.mkdir_p(dirpath)
 
 	if os.path.exists(dirpath + "subcats.txt"):
 		f = open(dirpath + "subcats.txt", 'r')
@@ -37,7 +38,8 @@ def crawl_pages(category, subcats):
 		counter += 1
 		pb.update(counter*100/len(subcats))
 
-		dirpath = "data/site/%s/%s/" % (category, subcat)
+		dirpath = "data/site/%s/%s/%s/" % (config.wiki_lang, category, subcat)
+		misc.mkdir_p(dirpath)
 
 		if os.path.exists(dirpath + "pages.txt"):
 			f = open(dirpath + "pages.txt", 'r')
@@ -55,7 +57,7 @@ def crawl_pages(category, subcats):
 	return pages
 
 def crawl_all_pages(pages):
-	dirpath = "data/pages/%s/" % config.start_cat
+	dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
 	counter = 0
 	for page in pages:
 		counter += 1
@@ -97,7 +99,7 @@ def get_pages(subcat):
 	return pages
 
 def get_xml(params):
-	url = "http://en.wiktionary.org/w/api.php?format=xml"
+	url = "http://%s.wiktionary.org/w/api.php?format=xml" % config.wiki_lang
 	for key, val in params.iteritems():
 		url += "&%s=%s" % (key, val)
 	url = urlnorm.norm(url)
@@ -110,7 +112,7 @@ def get_xml(params):
 	return response.read()
 
 def get_html(page):
-	url = "http://en.wiktionary.org/wiki/%s?action=render" % page
+	url = "http://%s.wiktionary.org/wiki/%s?action=render" % (config.wiki_lang, page)
 	url = urlnorm.norm(url)
 
 	# we should be able to crawl any page from the links we obtained

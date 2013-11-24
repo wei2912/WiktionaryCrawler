@@ -1,26 +1,13 @@
 # coding=utf8
 
-import config
+import config, misc, crawler, parser
 
 from collections import OrderedDict
-import crawler, parser
-import os
 
 def main():
-	if not os.path.exists("data/"):
-		os.mkdir("data/")
-	if not os.path.exists("data/site/"):
-		os.mkdir("data/site/")
-	if not os.path.exists("data/site/%s/" % config.start_cat):
-		os.mkdir("data/site/%s/" % config.start_cat)
-	if not os.path.exists("data/pages/"):
-		os.mkdir("data/pages/")
-	if not os.path.exists("data/pages/%s/" % config.start_cat):
-		os.mkdir("data/pages/%s/" % config.start_cat)
-	if not os.path.exists("data/speling/"):
-		os.mkdir("data/speling/")
-	if not os.path.exists("data/speling/%s/" % config.start_cat):
-		os.mkdir("data/speling/%s/" % config.start_cat)
+	misc.mkdir_p("data/site/%s/%s/" % (config.wiki_lang, config.start_cat))
+	misc.mkdir_p("data/pages/%s/%s/" % (config.wiki_lang, config.start_cat))
+	misc.mkdir_p("data/speling/%s/%s/" % (config.wiki_lang, config.start_cat))
 
 	config.init_config()
 

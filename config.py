@@ -1,19 +1,26 @@
 # coding=utf8
 
-import re
-
 start_cat = "Category:Mandarin language"
-lang = "zh"
-zh_s = True # (true) crawl only simplified chinese
-zh_t = False # (true) crawl only traditional chinese
 crawl_delay = 1 # in seconds
+lang = "zh"
+wiki_lang = "en"
 
 # blacklists
 subcats_bl = []
 pages_bl = [
-"Appendix:.*",
-"〜"
+"Appendix:.*"
 ]
+
+## lang-specific config vals ##
+
+## zh - Default
+zh_s = True # (true) crawl only simplified chinese
+zh_t = False # (true) crawl only traditional chinese
+
+## lang-specific config vals ##
+
+## DO NOT MODIFY ##
+import re
 
 def init_config():
 	for i in range(len(subcats_bl)):
@@ -32,3 +39,4 @@ def bl(regexes, line):
 		if regex.match(line):
 			return True
 	return False
+## DO NOT MODIFY ##
