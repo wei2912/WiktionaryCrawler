@@ -5,16 +5,46 @@ import urllib2
 import time
 import os
 import urlnorm
+from collections import OrderedDict
 
-
-def crawl():
-	subcats = crawl_subcats(config.start_cat)
+def crawl_subcats():
+	subcats = get_subcats(config.start_cat)
 	subcats = [subcat for subcat in subcats if not config.subcat_bl(subcat)]
-	pages = crawl_pages(config.start_cat, subcats)
+
+	more_subcats = []
+	counter = 0
+	for subcat in subcats: # crawling down another level
+		counter += 1
+		pb.update(counter, len(subcats))
+
+		more_subcatslist = get_subcats(subcat)
+		more_subcats.extend(more_subcatslist)
+
+	more_subcats = [subcat for subcat in more_subcats if not config.subcat_bl(subcat)]
+	subcats.extend(more_subcats)
+	subcats = OrderedDict.fromkeys(subcats).keys() # unique
+	return subcats
+
+def crawl_pages(subcats):
+	pages = get_pages(config.start_cat, subcats)
 	pages = [page for page in pages if not config.page_bl(page) and lang.can(page)]
+	pages = OrderedDict.fromkeys(crawler.crawl()).keys() # unique
 	return pages
 
-def crawl_subcats(category):
+def crawl_all_pages(pages):
+	dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
+	counter = 0
+	for page in pages:
+		counter += 1
+		pb.update(counter, len(pages))
+
+		if not os.path.exists(dirpath + page + ".html"):
+			f = open(dirpath + page + ".html", 'w')
+			htmldoc = get_html(page)
+			f.write(htmldoc)
+			f.close()
+
+def get_subcats(category):
 	dirpath = "data/site/%s/%s/" % (config.wiki_lang, category)
 	misc.mkdir_p(dirpath)
 
@@ -23,7 +53,7 @@ def crawl_subcats(category):
 		subcats = f.read().strip("\n").split("\n")
 		f.close()
 	else:
-		subcats = get_subcats(category)
+		subcats = dl_subcats(category)
 
 		f = open(dirpath + "subcats.txt", 'w')
 		for subcat in subcats:
@@ -31,7 +61,7 @@ def crawl_subcats(category):
 		f.close()
 	return subcats
 
-def crawl_pages(category, subcats):
+def get_pages(category, subcats):
 	pages = []
 	counter = 0
 	for subcat in subcats:
@@ -46,7 +76,7 @@ def crawl_pages(category, subcats):
 			subcat_pages = f.read().strip("\n").split("\n")
 			f.close()
 		else:
-			subcat_pages = get_pages(subcat)
+			subcat_pages = dl_pages(subcat)
 
 			f = open(dirpath + "pages.txt", 'w')
 			for page in subcat_pages:
@@ -56,29 +86,13 @@ def crawl_pages(category, subcats):
 		pages.extend(subcat_pages)
 	return pages
 
-def crawl_all_pages(pages):
-	dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
-	counter = 0
-	for page in pages:
-		counter += 1
-		pb.update(counter, len(pages))
-
-		if "appendix" in page.lower():
-			continue
-
-		if not os.path.exists(dirpath + page + ".html"):
-			f = open(dirpath + page + ".html", 'w')
-			htmldoc = get_html(page)
-			f.write(htmldoc)
-			f.close()
-
-def get_subcats(category):
+def dl_subcats(category):
 	subcats = []
 	cmcontinue = True
 	cmcontinue_str = ""
 
 	while cmcontinue:
-		xml = get_subcats_xml(category, cmcontinue_str)
+		xml = dl_subcats_xml(category, cmcontinue_str)
 
 		xmldoc = minidom.parseString(xml)
 		subcatlist = xmldoc.getElementsByTagName('cm')
@@ -94,28 +108,28 @@ def get_subcats(category):
 
 	return subcats
 
-def get_subcats_xml(category, cmcontinue):
+def dl_subcats_xml(category, cmcontinue):
 	if cmcontinue:
-		return get_xml({"action": "query", 
+		return dl_xml({"action": "query", 
 			"list": "categorymembers",
 			"cmtitle": category,
 			"cmtype": "subcat",
 			"cmlimit": "500",
 			"cmcontinue": cmcontinue})
 	else:
-		return get_xml({"action": "query", 
+		return dl_xml({"action": "query", 
 			"list": "categorymembers",
 			"cmtitle": category,
 			"cmtype": "subcat",
 			"cmlimit": "500"})
 
-def get_pages(subcat):
+def dl_pages(subcat):
 	pages = []
 	cmcontinue = True
 	cmcontinue_str = ""
 
 	while cmcontinue:
-		xml = get_pages_xml(subcat, cmcontinue_str)
+		xml = dl_pages_xml(subcat, cmcontinue_str)
 
 		xmldoc = minidom.parseString(xml)
 		pagelist = xmldoc.getElementsByTagName('cm')
@@ -131,22 +145,22 @@ def get_pages(subcat):
 
 	return pages
 
-def get_pages_xml(subcat, cmcontinue):
+def dl_pages_xml(subcat, cmcontinue):
 	if cmcontinue:
-		return get_xml({"action": "query", 
+		return dl_xml({"action": "query", 
 			"list": "categorymembers",
 			"cmtitle": subcat,
 			"cmtype": "page",
 			"cmlimit": "500",
 			"cmcontinue": cmcontinue})
 	else:
-		return get_xml({"action": "query", 
+		return dl_xml({"action": "query", 
 			"list": "categorymembers",
 			"cmtitle": subcat,
 			"cmtype": "page",
 			"cmlimit": "500"})
 
-def get_xml(params):
+def dl_xml(params):
 	url = "http://%s.wiktionary.org/w/api.php?format=xml" % config.wiki_lang
 	for key, val in params.iteritems():
 		url += "&%s=%s" % (key, val)
@@ -159,7 +173,7 @@ def get_xml(params):
 	time.sleep(config.crawl_delay)
 	return response.read()
 
-def get_html(page):
+def dl_html(page):
 	url = "http://%s.wiktionary.org/wiki/%s?action=render" % (config.wiki_lang, page)
 	url = urlnorm.norm(url)
 
