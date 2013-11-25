@@ -8,7 +8,8 @@ wiki_lang = "en"
 # blacklists
 subcats_bl = [
 "Category:cmn.*",
-".* derived from Mandarin"
+".* derived from Mandarin",
+".* in (simplified|traditional) script"
 ]
 pages_bl = [
 "Appendix:.*",
