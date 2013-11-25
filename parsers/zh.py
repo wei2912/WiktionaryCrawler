@@ -104,12 +104,19 @@ def parse(page, htmldoc):
 
 def shortify(postag):
 	shortify_tags = {
+	"abbreviation": "abbrv",
 	"adjective": "adj",
 	"adverb": "adv",
-	"conjunction": "conj",
-	"interjection": "interj",
+	"conjunction": "cnj",
+	"determiner": "det",
+	"interjection": "ij",
+	"interrogative": "itg",
 	"measure word": "mw",
-	"abbreviation": "abbrv"
+	"noun": "n",
+	"postpostition": "post",
+	"preposition": "pre",
+	"pronoun": "prn",
+	"verb": "vblex"
 	}
 	if postag in shortify_tags:
 		return shortify_tags[postag]
