@@ -7,6 +7,7 @@ class TestSequenceFunctions(unittest.TestCase):
     def test_parse(self):
         self.parse_word("の")
         self.parse_word("ㄑ")
+        self.parse_word("。")
         self.parse_word("a1")
         self.parse_word("LKK")
         self.parse_word("OK")
@@ -15,8 +16,8 @@ class TestSequenceFunctions(unittest.TestCase):
         self.parse_word("几个")
         self.parse_word("啊")
         self.parse_word("好")
-        self.parse_word("曾经沧海难为水")
         self.parse_word("巴扎")
+        self.parse_word("曾经沧海难为水")
         self.parse_word("阿")
 
     def parse_word(self, word):

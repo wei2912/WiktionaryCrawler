@@ -1,2 +1,2 @@
 OK ; adj ; none ; all right
-OK ; interj ; none ; OK
+OK ; ij ; none ; OK

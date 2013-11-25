@@ -1,3 +1,5 @@
+# coding=utf8
+
 import config
 
 import re
@@ -54,6 +56,12 @@ def parse(page, htmldoc):
 
 	if abbrv_regex.match(page):
 		soup = BeautifulSoup(unicode(soup).replace("### Initialism", "### Abbreviation"))
+
+	punc_end = ["。", "？", "！"]
+	if page in punc_end:
+		soup = BeautifulSoup(unicode(soup).replace("### Punctuation mark", "### sent"))
+	if page == "，":
+		soup = BeautifulSoup(unicode(soup).replace("### Punctuation mark", "### cm"))
 
 	textdoc = [line.strip() for line in soup.get_text().split("\n")]
 	textdoc = [line for line in textdoc if line != ""]
@@ -116,7 +124,9 @@ def shortify(postag):
 	"postpostition": "post",
 	"preposition": "pre",
 	"pronoun": "prn",
-	"verb": "vblex"
+	"proper noun": "np",
+	"verb": "vblex",
+	"punctuation mark": "punc"
 	}
 	if postag in shortify_tags:
 		return shortify_tags[postag]
