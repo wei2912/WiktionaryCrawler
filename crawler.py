@@ -73,30 +73,78 @@ def crawl_all_pages(pages):
 			f.close()
 
 def get_subcats(category):
-	xml = get_xml({"action": "query", 
-		"list": "categorymembers",
-		"cmtitle": category,
-		"cmtype": "subcat",
-		"cmlimit": "500"})
+	subcats = []
+	cmcontinue = True
+	cmcontinue_str = ""
 
-	xmldoc = minidom.parseString(xml)
-	subcatlist = xmldoc.getElementsByTagName('cm')
-	subcats = [subcat.attributes['title'].value.encode("utf8") for subcat in subcatlist]
+	while cmcontinue:
+		xml = get_subcats_xml(category, cmcontinue_str)
+
+		xmldoc = minidom.parseString(xml)
+		subcatlist = xmldoc.getElementsByTagName('cm')
+		subcatlist = [subcat.attributes['title'].value.encode("utf8") for subcat in subcatlist]
+		subcats.extend(subcatlist)
+
+		list = xmldoc.getElementsByTagName('query-continue')
+		if list:
+			categorymembers = list[0].getElementsByTagName('categorymembers')[0]
+			cmcontinue_str = categorymembers.attributes["cmcontinue"].value
+		else:
+			cmcontinue = False
 
 	return subcats
 
-def get_pages(subcat):
-	xml = get_xml({"action": "query", 
-		"list": "categorymembers",
-		"cmtitle": subcat,
-		"cmtype": "page",
-		"cmlimit": "500"})
+def get_subcats_xml(category, cmcontinue):
+	if cmcontinue:
+		return get_xml({"action": "query", 
+			"list": "categorymembers",
+			"cmtitle": category,
+			"cmtype": "subcat",
+			"cmlimit": "500",
+			"cmcontinue": cmcontinue})
+	else:
+		return get_xml({"action": "query", 
+			"list": "categorymembers",
+			"cmtitle": category,
+			"cmtype": "subcat",
+			"cmlimit": "500"})
 
-	xmldoc = minidom.parseString(xml)
-	pagelist = xmldoc.getElementsByTagName('cm')
-	pages = [page.attributes['title'].value.encode("utf8") for page in pagelist]
+def get_pages(subcat):
+	pages = []
+	cmcontinue = True
+	cmcontinue_str = ""
+
+	while cmcontinue:
+		xml = get_pages_xml(subcat, cmcontinue_str)
+
+		xmldoc = minidom.parseString(xml)
+		pagelist = xmldoc.getElementsByTagName('cm')
+		pagelist = [page.attributes['title'].value.encode("utf8") for page in pagelist]
+		pages.extend(pagelist)
+
+		list = xmldoc.getElementsByTagName('query-continue')
+		if list:
+			categorymembers = list[0].getElementsByTagName('categorymembers')[0]
+			cmcontinue_str = categorymembers.attributes["cmcontinue"].value
+		else:
+			cmcontinue = False
 
 	return pages
+
+def get_pages_xml(subcat, cmcontinue):
+	if cmcontinue:
+		return get_xml({"action": "query", 
+			"list": "categorymembers",
+			"cmtitle": subcat,
+			"cmtype": "page",
+			"cmlimit": "500",
+			"cmcontinue": cmcontinue})
+	else:
+		return get_xml({"action": "query", 
+			"list": "categorymembers",
+			"cmtitle": subcat,
+			"cmtype": "page",
+			"cmlimit": "500"})
 
 def get_xml(params):
 	url = "http://%s.wiktionary.org/w/api.php?format=xml" % config.wiki_lang
