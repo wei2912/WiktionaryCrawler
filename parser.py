@@ -14,7 +14,7 @@ def parse(pages):
 	counter = 0
 	for page in pages:
 		counter += 1
-		pb.update(counter*100/len(pages))
+		pb.update(counter, len(pages))
 
 		if os.path.exists(speling_dirpath + page + ".txt"):
 			f = open(speling_dirpath + page + ".txt", 'r')

@@ -36,7 +36,7 @@ def crawl_pages(category, subcats):
 	counter = 0
 	for subcat in subcats:
 		counter += 1
-		pb.update(counter*100/len(subcats))
+		pb.update(counter, len(subcats))
 
 		dirpath = "data/site/%s/%s/%s/" % (config.wiki_lang, category, subcat)
 		misc.mkdir_p(dirpath)
@@ -61,7 +61,7 @@ def crawl_all_pages(pages):
 	counter = 0
 	for page in pages:
 		counter += 1
-		pb.update(counter*100/len(pages))
+		pb.update(counter, len(pages))
 
 		if "appendix" in page.lower():
 			continue
