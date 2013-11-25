@@ -32,5 +32,6 @@ def parse(pages):
 				f.write(speling + "\n")
 			f.close()
 		spelings.extend(speling_list)
+	spelings = [speling for speling in spelings if not speling == ""]
 	return spelings
 

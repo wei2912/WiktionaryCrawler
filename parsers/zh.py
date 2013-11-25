@@ -22,7 +22,7 @@ def parse(page, htmldoc):
 	pinyin_regex = r".+?, pinyin:? (?P<pinyin>.+?)(?:,|\))"
 	pinyin_regex = re.compile(pinyin_regex, re.IGNORECASE)
 	
-	pinyin_regex1 = r"pinyin:? (.+?) (?:\(.+?\))?(?:, (.+?) (?:\(.+?\))?)?"
+	pinyin_regex1 = r"pinyin:? (.+?) (?:\(.+?\))?(?:, (.+?) (?:\(.+?\))?)?(?:, |\))"
 	pinyin_regex1 = re.compile(pinyin_regex1, re.IGNORECASE)
 
 	pinyin_regex2 = r"\((?P<pinyin>\S+? or \S+?)\)"
@@ -37,8 +37,17 @@ def parse(page, htmldoc):
 	soup = BeautifulSoup(htmldoc)
 	soup = take_out_edit(soup)
 
+	strip_tags = [
+	"dd",
+	"dl"
+	]
+	for tag in strip_tags:
+		for e in soup.findAll(tag):
+			e.extract()
+
 	soup = strip_out_section(soup, htmldoc, "h2", "Mandarin", 1)
 	soup = strip_out_section(soup, htmldoc, "h3", "Romanization", 0)
+	soup = strip_out_section(soup, htmldoc, "h3", "Etymology", 0)
 
 	soup = format_headings(soup) # marks out sections
 	soup = format_ol(soup) # marks out english
@@ -75,12 +84,12 @@ def parse(page, htmldoc):
 				pinyin = search3.groups()[0].encode("utf8")
 			elif search4:
 				pinyin = search4.groups()[0].encode("utf8")
-			pinyin.replace(" or ", ", ")
+			pinyin = pinyin.replace(" or ", ", ")
 		elif line.startswith("* "): # found english
 			english = line[2:].encode("utf8")
 
 			if not pinyin:
-				pinyin = "not found"
+				pinyin = "none"
 
 			if word and postag and pinyin and english:
 				speling = "%s ; %s ; %s ; %s" % (word, postag, pinyin, english)

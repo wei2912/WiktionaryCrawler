@@ -8,7 +8,8 @@ wiki_lang = "en"
 # blacklists
 subcats_bl = []
 pages_bl = [
-"Appendix:.*"
+"Appendix:.*",
+"Template:.*"
 ]
 
 ## lang-specific config vals ##

@@ -5,16 +5,19 @@ import unittest
 
 class TestSequenceFunctions(unittest.TestCase):
     def test_parse(self):
+        self.parse_word("の")
+        self.parse_word("ㄑ")
+        self.parse_word("a1")
+        self.parse_word("LKK")
+        self.parse_word("OK")
+        self.parse_word("便当")
+        self.parse_word("兩者")
+        self.parse_word("几个")
         self.parse_word("啊")
         self.parse_word("好")
-        self.parse_word("LKK")
-        self.parse_word("便当")
-        self.parse_word("几个")
-        self.parse_word("a1")
-        self.parse_word("阿")
-        self.parse_word("兩者")
+        self.parse_word("曾经沧海难为水")
         self.parse_word("巴扎")
-        self.parse_word("の")
+        self.parse_word("阿")
 
     def parse_word(self, word):
         htmldoc = open("zh_tests/%s.html" % word, "r").read()
