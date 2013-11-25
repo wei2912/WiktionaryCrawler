@@ -6,7 +6,10 @@ lang = "zh"
 wiki_lang = "en"
 
 # blacklists
-subcats_bl = []
+subcats_bl = [
+"Category:cmn.*",
+".* derived from Mandarin"
+]
 pages_bl = [
 "Appendix:.*",
 "Template:.*"
