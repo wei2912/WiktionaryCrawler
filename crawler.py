@@ -40,7 +40,7 @@ def crawl_all_pages(pages):
 
 		if not os.path.exists(dirpath + page + ".html"):
 			f = open(dirpath + page + ".html", 'w')
-			htmldoc = get_html(page)
+			htmldoc = dl_html(page)
 			f.write(htmldoc)
 			f.close()
 
