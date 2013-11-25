@@ -12,31 +12,35 @@ Here are the list of language specific dependencies:
 
 # Stages
 
-The crawler goes through 4 stages.
+The crawler goes through 5 stages.
 
-## Stage 1: Obtaining list of pages to crawl.
+## Stage 1: Obtaining list of subcategories to crawl.
 
 1) The crawler looks for sub-categories in a starting category (`config.start_cat`) and records them down in `data/site/start_cat/subcats.txt`. Any sub-categories blacklisted will not be included.
 
-2) The crawler then crawls the sub-categories for pages and records them down in `data/site/start_cat/subcat/pages.txt`. Any pages blacklisted will not be included.
+2) The crawler looks for sub-categories in those sub-categories and adds them to the list of sub-categories.
+
+## Stage 2: Obtaining list of pages to crawl.
+
+2) The crawler then crawls the sub-categories for pages and records them down in `data/site/start_cat/subcat/pages.txt`. Any pages blacklisted or filtered will not be included.
 
 More information can be found at [Filters](https://github.com/wei2912/WiktionaryCrawler#filters).
 
 3) These pages are then added to a list of pages which will then be crawled at the next stage.
 
-## Stage 2: Crawling all pages in list.
+## Stage 3: Crawling all pages in list.
 
 1) The crawler goes through every page in the list and downloads it into `data/pages`.
 
 ***NOTE: This stage will take a very long time to complete as the crawler has to abide by crawl delays.***
 
-## Stage 3: Parsing all pages in list.
+## Stage 4: Parsing all pages in list.
 
 1) The parser goes through every page in the list and parses it based on the language.
 
 More information can be found at [Parsers](https://github.com/wei2912/WiktionaryCrawler#parsers).
 
-## Stage 4: Writing final results to file.
+## Stage 5: Writing final results to file.
 
 1) All spelings are written to `data/spelings.txt`
 
@@ -54,7 +58,7 @@ Filters are stored in `filters/`. Every filter has a test suite which goes by th
 
 # Parsers
 
-At stage 3, pages are parsed based on language. Here is the list of parsers:
+At stage 4, pages are parsed based on language. Here is the list of parsers:
 
 * **zh.py** - Chinese (simplified and traditional)
 	* Parses pages into the following format: `word ; POS tag ; pinyin ; gloss (meaning)`
@@ -96,7 +100,7 @@ The top comment, `# coding=utf8`, is required to set the encoding of the file so
 
 ## `start_cat`
 
-`start_cat` is the category where the crawler begins crawling for sub-categories. Refer to [Stage 1](https://github.com/wei2912/WiktionaryCrawler#stage-1-obtaining-list-of-pages-to-crawl) for more details.
+`start_cat` is the category where the crawler begins crawling for sub-categories.
 
 The default value is `Category:Mandarin_language`. Adapt this to the language which you wish to crawl. Remember to modify `lang` as well.
 
@@ -126,7 +130,13 @@ The default value is `en`.
 
 `subcats_bl` is a list of regular expressions which can be used to match subcategories that should be blacklisted.
 
-By default, no pages are blacklisted.
+By default, the following subcats are blacklisted:
+
+* Category:cmn.*
+* .* derived from Mandarin
+* .* in (simplified|traditional) script
+
+Note that this is specific to Chinese.
 
 ## `pages_bl`
 
