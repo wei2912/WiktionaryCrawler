@@ -8,7 +8,7 @@ Depending on your language, you may need to install more dependencies.
 
 Here are the list of language specific dependencies:
 
-* **zh**: `sudo pip install mafan`
+* **zh**: `sudo pip install mafan PyICU`
 
 # Stages
 
@@ -20,7 +20,7 @@ The crawler goes through 4 stages.
 
 2) The crawler then crawls the sub-categories for pages and records them down in `data/site/start_cat/subcat/pages.txt`. Any pages blacklisted will not be included.
 
-	* More information can be found at [Filters](https://github.com/wei2912/WiktionaryCrawler#filters).
+More information can be found at [Filters](https://github.com/wei2912/WiktionaryCrawler#filters).
 
 3) These pages are then added to a list of pages which will then be crawled at the next stage.
 
@@ -34,7 +34,7 @@ The crawler goes through 4 stages.
 
 1) The parser goes through every page in the list and parses it based on the language.
 
-	* More information can be found at [Parsers](https://github.com/wei2912/WiktionaryCrawler#parsers).
+More information can be found at [Parsers](https://github.com/wei2912/WiktionaryCrawler#parsers).
 
 ## Stage 4: Writing final results to file.
 
@@ -135,6 +135,7 @@ By default, no pages are blacklisted.
 By default, the following pages are blacklisted:
 
 * `Appendix:.*`
+* `Template:.*`
 
 ## Language specific configuration values
 
