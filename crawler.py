@@ -28,7 +28,7 @@ def crawl_subcats():
 def crawl_pages(subcats):
 	pages = get_pages(config.start_cat, subcats)
 	pages = [page for page in pages if not config.page_bl(page) and lang.can(page)]
-	pages = OrderedDict.fromkeys(crawler.crawl()).keys() # unique
+	pages = OrderedDict.fromkeys(pages).keys() # unique
 	return pages
 
 def crawl_all_pages(pages):
