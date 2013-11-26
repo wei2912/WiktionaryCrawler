@@ -41,11 +41,5 @@ def parse_page(page):
 	htmldoc = f.read()
 	f.close()
 
-	while True:
-		try:
-			speling_list = lang.parse(page, htmldoc)
-			break
-		except:
-			e = sys.exc_info()[0]
-			print(e)
+	speling_list = lang.parse(page, htmldoc)
 	return speling_list
