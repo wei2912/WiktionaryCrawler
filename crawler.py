@@ -20,8 +20,9 @@ def crawl_subcats():
 		
 		misc.write_file(dirpath + "subcats.txt", subcats)
 
-	counter = 0
 	more_subcats = []
+
+	counter = 0
 	for subcat in subcats: # crawling a level deeper
 		counter += 1
 		pb.update(counter, len(subcats))
@@ -50,8 +51,8 @@ def crawl_subcats():
 def crawl_pages(subcats):
 	dirpath = "data/site/%s/%s/" % (config.wiki_lang, config.start_cat)
 	pages = []
-	counter = 0
 
+	counter = 0
 	for subcat in subcats:
 		counter += 1
 		pb.update(counter, len(subcats))
@@ -75,6 +76,7 @@ def crawl_pages(subcats):
 def crawl_all_pages(pages):
 	dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
 
+	counter = 0
 	for page in pages:
 		counter += 1
 		pb.update(counter, len(pages))
