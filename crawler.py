@@ -25,51 +25,51 @@ def crawl_pages(subcats):
 	return pages
 
 def crawl_all_pages(pages):
-	crawl_again = False
-
 	dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
-	counter = 0
-	for page in pages:
-		counter += 1
-		pb.update(counter, len(pages))
 
-		if not os.path.exists(dirpath + page + ".html"):
+	to_crawl = True
+	while to_crawl:
+		counter = 0
+		to_crawl = False
+
+		for page in pages:
+			counter += 1
+			pb.update(counter, len(pages))
+
+			if not os.path.exists(dirpath + page + ".html"):
+				try:
+					f = open(dirpath + page + ".html", 'w')
+					htmldoc = dl_html(page)
+					f.write(htmldoc)
+					f.close()
+				except:
+					e = sys.exc_info()[0]
+					print(e)
+					to_crawl = True
+					continue
+					# skip for now, we'll do another crawl later
+
+def get_subcats_subcats(subcats):
+	to_crawl = True
+
+	while to_crawl:
+		more_subcats = []
+		counter = 0
+		to_crawl = False
+		
+		for subcat in subcats: # crawling down another level
+			counter += 1
+			pb.update(counter, len(subcats))
+
 			try:
-				f = open(dirpath + page + ".html", 'w')
-				htmldoc = dl_html(page)
-				f.write(htmldoc)
-				f.close()
+				more_subcatslist = get_subcats(subcat)
+				more_subcats.extend(more_subcatslist)
 			except:
 				e = sys.exc_info()[0]
 				print(e)
-				crawl_again = True
+				to_crawl = True
 				continue
 				# skip for now, we'll do another crawl later
-	
-	if crawl_again:
-		crawl_all_pages(pages)
-
-def get_subcats_subcats(subcats):
-	crawl_again = False
-
-	more_subcats = []
-	counter = 0
-	for subcat in subcats: # crawling down another level
-		counter += 1
-		pb.update(counter, len(subcats))
-
-		try:
-			more_subcatslist = get_subcats(subcat)
-			more_subcats.extend(more_subcatslist)
-		except:
-			e = sys.exc_info()[0]
-			print(e)
-			crawl_again = True
-			continue
-			# skip for now, we'll do another crawl later
-
-	if crawl_again:
-		more_subcats = get_subcats_subcats(subcats)
 	return more_subcats
 
 def get_subcats(category):
@@ -90,40 +90,40 @@ def get_subcats(category):
 	return subcats
 
 def get_pages(category, subcats):
-	crawl_again = False
+	to_crawl = True
 
-	pages = []
-	counter = 0
-	for subcat in subcats:
-		counter += 1
-		pb.update(counter, len(subcats))
+	while to_crawl:
+		pages = []
+		counter = 0
+		to_crawl = False
 
-		dirpath = "data/site/%s/%s/%s/" % (config.wiki_lang, category, subcat)
-		misc.mkdir_p(dirpath)
+		for subcat in subcats:
+			counter += 1
+			pb.update(counter, len(subcats))
 
-		if os.path.exists(dirpath + "pages.txt"):
-			f = open(dirpath + "pages.txt", 'r')
-			subcat_pages = f.read().strip("\n").split("\n")
-			f.close()
-		else:
-			try:
-				subcat_pages = dl_pages(subcat)
+			dirpath = "data/site/%s/%s/%s/" % (config.wiki_lang, category, subcat)
+			misc.mkdir_p(dirpath)
 
-				f = open(dirpath + "pages.txt", 'w')
-				for page in subcat_pages:
-					f.write(page + "\n")
+			if os.path.exists(dirpath + "pages.txt"):
+				f = open(dirpath + "pages.txt", 'r')
+				subcat_pages = f.read().strip("\n").split("\n")
 				f.close()
-			except:
-				e = sys.exc_info()[0]
-				print(e)
-				crawl_again = True
-				continue
-				# skip for now, we'll do another crawl later
+			else:
+				try:
+					subcat_pages = dl_pages(subcat)
+
+					f = open(dirpath + "pages.txt", 'w')
+					for page in subcat_pages:
+						f.write(page + "\n")
+					f.close()
+				except:
+					e = sys.exc_info()[0]
+					print(e)
+					to_crawl = True
+					continue
+					# skip for now, we'll do another crawl later
 
 		pages.extend(subcat_pages)
-
-	if crawl_again:
-		pages = get_pages(category, subcats)
 	return pages
 
 def dl_subcats(category):
