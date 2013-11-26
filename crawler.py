@@ -25,6 +25,8 @@ def crawl_pages(subcats):
 	return pages
 
 def crawl_all_pages(pages):
+	crawl_again = False
+
 	dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
 	counter = 0
 	for page in pages:
@@ -32,10 +34,20 @@ def crawl_all_pages(pages):
 		pb.update(counter, len(pages))
 
 		if not os.path.exists(dirpath + page + ".html"):
-			f = open(dirpath + page + ".html", 'w')
-			htmldoc = dl_html(page)
-			f.write(htmldoc)
-			f.close()
+			try:
+				f = open(dirpath + page + ".html", 'w')
+				htmldoc = dl_html(page)
+				f.write(htmldoc)
+				f.close()
+			except:
+				e = sys.exc_info()[0]
+				print(e)
+				crawl_again = True
+				continue
+				# skip for now, we'll do another crawl later
+	
+	if crawl_again:
+		crawl_all_pages(pages)
 
 def get_subcats_subcats(subcats):
 	crawl_again = False
