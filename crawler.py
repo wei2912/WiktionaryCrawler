@@ -9,17 +9,65 @@ from collections import OrderedDict
 import sys
 
 def crawl_subcats():
-	subcats = get_subcats(config.start_cat)
-	subcats = [subcat for subcat in subcats if not config.subcat_bl(subcat)]
+	dirpath = "data/site/%s/%s/" % (config.wiki_lang, config.start_cat)
+	filepath = dirpath + "%s/subcats.txt"
 
-	more_subcats = get_subcats_subcats(subcats)
-	more_subcats = [subcat for subcat in more_subcats if not config.subcat_bl(subcat)]
+	if os.path.exists(filepath):
+		subcats = misc.read_file(filepath)
+	else:
+		subcats = get_subcats(config.start_cat)
+		subcats = [subcat for subcat in subcats if not config.subcat_bl(subcat)]
+		
+		misc.write_file(dirpath + "subcats.txt", subcats)
+
+	counter = 0
+	more_subcats = []
+	for subcat in subcats: # crawling a level deeper
+		counter += 1
+		pb.update(counter, len(subcats))
+		if counter == len(subcats):
+			break
+
+		subcat = subcats[counter-1]
+
+		subcat_dirpath = dirpath + subcat + "/"
+		misc.mkdir_p(subcat_dirpath)
+
+		filepath = subcat_dirpath + "subcats.txt"
+
+		if os.path.exists(filepath):
+			subcat_list = misc.read_file(filepath)
+		else:
+			subcat_list = get_subcats(subcat)
+			misc.write_file(filepath, subcats)
+
+		more_subcats.extend(subcat_list)
+
+	more_subcats = [subcat for subcat in more_subcats if not config.subcat_bl(subcat) and not subcat in subcats]
 	subcats.extend(more_subcats)
-	subcats = OrderedDict.fromkeys(subcats).keys() # unique
 	return subcats
 
 def crawl_pages(subcats):
-	pages = get_pages(config.start_cat, subcats)
+	dirpath = "data/site/%s/%s/" % (config.wiki_lang, config.start_cat)
+	pages = []
+	counter = 0
+
+	for subcat in subcats:
+		counter += 1
+		pb.update(counter, len(subcats))
+
+		subcat_dirpath = dirpath + subcat + "/"
+		misc.mkdir_p(subcat_dirpath)
+
+		filepath = subcat_dirpath + "pages.txt"
+		if os.path.exists(filepath):
+			subcat_pages = misc.read_file(filepath)
+		else:
+			subcat_pages = get_subcat_pages(subcat)
+			misc.write_file(filepath, subcat_pages)
+
+		pages.extend(subcat_pages)
+
 	pages = [page for page in pages if not config.page_bl(page) and lang.can(page)]
 	pages = OrderedDict.fromkeys(pages).keys() # unique
 	return pages
@@ -27,104 +75,49 @@ def crawl_pages(subcats):
 def crawl_all_pages(pages):
 	dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
 
-	to_crawl = True
-	while to_crawl:
-		counter = 0
-		to_crawl = False
+	for page in pages:
+		counter += 1
+		pb.update(counter, len(pages))
 
-		for page in pages:
-			counter += 1
-			pb.update(counter, len(pages))
+		filepath = dirpath + page + ".html"
+		if not os.path.exists(filepath):
+			htmldoc = get_page(page)
 
-			if not os.path.exists(dirpath + page + ".html"):
-				try:
-					f = open(dirpath + page + ".html", 'w')
-					htmldoc = dl_html(page)
-					f.write(htmldoc)
-					f.close()
-				except:
-					e = sys.exc_info()[0]
-					print(e)
-					to_crawl = True
-					continue
-					# skip for now, we'll do another crawl later
-
-def get_subcats_subcats(subcats):
-	to_crawl = True
-
-	while to_crawl:
-		more_subcats = []
-		counter = 0
-		to_crawl = False
-		
-		for subcat in subcats: # crawling down another level
-			counter += 1
-			pb.update(counter, len(subcats))
-
-			try:
-				more_subcatslist = get_subcats(subcat)
-				more_subcats.extend(more_subcatslist)
-			except:
-				e = sys.exc_info()[0]
-				print(e)
-				to_crawl = True
-				continue
-				# skip for now, we'll do another crawl later
-	return more_subcats
+			f = open(filepath, 'w')
+			f.write(htmldoc)
+			f.close()
 
 def get_subcats(category):
-	dirpath = "data/site/%s/%s/" % (config.wiki_lang, category)
-	misc.mkdir_p(dirpath)
+	while True:
+		try:
+			subcats = dl_subcats(category)
+			break
+		except:
+			e = sys.exc_info()[0]
+			print(e)
 
-	if os.path.exists(dirpath + "subcats.txt"):
-		f = open(dirpath + "subcats.txt", 'r')
-		subcats = f.read().strip("\n").split("\n")
-		f.close()
-	else:
-		subcats = dl_subcats(category)
-
-		f = open(dirpath + "subcats.txt", 'w')
-		for subcat in subcats:
-			f.write(subcat + "\n")
-		f.close()
 	return subcats
 
-def get_pages(category, subcats):
-	to_crawl = True
+def get_subcat_pages(subcat):
+	while True:
+		try:
+			subcat_pages = dl_pages(subcat)
+			break
+		except:
+			e = sys.exc_info()[0]
+			print(e)
 
-	while to_crawl:
-		pages = []
-		counter = 0
-		to_crawl = False
+	return subcat_pages
 
-		for subcat in subcats:
-			counter += 1
-			pb.update(counter, len(subcats))
-
-			dirpath = "data/site/%s/%s/%s/" % (config.wiki_lang, category, subcat)
-			misc.mkdir_p(dirpath)
-
-			if os.path.exists(dirpath + "pages.txt"):
-				f = open(dirpath + "pages.txt", 'r')
-				subcat_pages = f.read().strip("\n").split("\n")
-				f.close()
-			else:
-				try:
-					subcat_pages = dl_pages(subcat)
-
-					f = open(dirpath + "pages.txt", 'w')
-					for page in subcat_pages:
-						f.write(page + "\n")
-					f.close()
-				except:
-					e = sys.exc_info()[0]
-					print(e)
-					to_crawl = True
-					continue
-					# skip for now, we'll do another crawl later
-
-		pages.extend(subcat_pages)
-	return pages
+def get_page(page):
+	while True:
+		try:
+			htmldoc = dl_html(page)
+			break
+		except:
+			e = sys.exc_info()[0]
+			print(e)
+	return htmldoc
 
 def dl_subcats(category):
 	subcats = []
