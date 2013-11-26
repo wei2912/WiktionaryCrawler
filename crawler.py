@@ -209,7 +209,7 @@ def dl_xml(params):
 	return response.read()
 
 def dl_html(page):
-	url = "http://%s.wiktionary.org/wiki/%s?action=render" % (config.wiki_lang, page)
+	url = "http://%s.wiktionary.org/wiki/%s" % (config.wiki_lang, page)
 	url = urlnorm.norm(url)
 
 	# we should be able to crawl any page from the links we obtained
