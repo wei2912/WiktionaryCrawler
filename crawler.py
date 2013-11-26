@@ -6,20 +6,13 @@ import time
 import os
 import urlnorm
 from collections import OrderedDict
+import sys
 
 def crawl_subcats():
 	subcats = get_subcats(config.start_cat)
 	subcats = [subcat for subcat in subcats if not config.subcat_bl(subcat)]
 
-	more_subcats = []
-	counter = 0
-	for subcat in subcats: # crawling down another level
-		counter += 1
-		pb.update(counter, len(subcats))
-
-		more_subcatslist = get_subcats(subcat)
-		more_subcats.extend(more_subcatslist)
-
+	more_subcats = get_subcats_subcats(subcats)
 	more_subcats = [subcat for subcat in more_subcats if not config.subcat_bl(subcat)]
 	subcats.extend(more_subcats)
 	subcats = OrderedDict.fromkeys(subcats).keys() # unique
@@ -44,6 +37,29 @@ def crawl_all_pages(pages):
 			f.write(htmldoc)
 			f.close()
 
+def get_subcats_subcats(subcats):
+	crawl_again = False
+
+	more_subcats = []
+	counter = 0
+	for subcat in subcats: # crawling down another level
+		counter += 1
+		pb.update(counter, len(subcats))
+
+		try:
+			more_subcatslist = get_subcats(subcat)
+			more_subcats.extend(more_subcatslist)
+		except:
+			e = sys.exc_info()[0]
+			print(e)
+			crawl_again = True
+			continue
+			# skip for now, we'll do another crawl later
+
+	if crawl_again:
+		more_subcats = get_subcats_subcats(subcats)
+	return more_subcats
+
 def get_subcats(category):
 	dirpath = "data/site/%s/%s/" % (config.wiki_lang, category)
 	misc.mkdir_p(dirpath)
@@ -62,6 +78,8 @@ def get_subcats(category):
 	return subcats
 
 def get_pages(category, subcats):
+	crawl_again = False
+
 	pages = []
 	counter = 0
 	for subcat in subcats:
@@ -76,14 +94,24 @@ def get_pages(category, subcats):
 			subcat_pages = f.read().strip("\n").split("\n")
 			f.close()
 		else:
-			subcat_pages = dl_pages(subcat)
+			try:
+				subcat_pages = dl_pages(subcat)
 
-			f = open(dirpath + "pages.txt", 'w')
-			for page in subcat_pages:
-				f.write(page + "\n")
-			f.close()
+				f = open(dirpath + "pages.txt", 'w')
+				for page in subcat_pages:
+					f.write(page + "\n")
+				f.close()
+			except:
+				e = sys.exc_info()[0]
+				print(e)
+				crawl_again = True
+				continue
+				# skip for now, we'll do another crawl later
 
 		pages.extend(subcat_pages)
+
+	if crawl_again:
+		pages = get_pages(category, subcats)
 	return pages
 
 def dl_subcats(category):

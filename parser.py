@@ -7,6 +7,7 @@ import os
 import time
 
 def parse(pages):
+	parse_again = False
 	spelings = []
 
 	pages_dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
@@ -25,13 +26,23 @@ def parse(pages):
 			htmldoc = f.read()
 			f.close()
 
-			speling_list = lang.parse(page, htmldoc)
+			try:
+				speling_list = lang.parse(page, htmldoc)
 
-			f = open(speling_dirpath + page + ".txt", 'w')
-			for speling in speling_list:
-				f.write(speling + "\n")
-			f.close()
+				f = open(speling_dirpath + page + ".txt", 'w')
+				for speling in speling_list:
+					f.write(speling + "\n")
+				f.close()
+			except:
+				e = sys.exc_info()[0]
+				print(e)
+				parse_again = True
+				continue
+				# skip for now, we'll do another round of parsing later
 		spelings.extend(speling_list)
+	
+	if parse_again:
+		spelings = parse(pages)
 	spelings = [speling for speling in spelings if not speling == ""]
 	return spelings
 
