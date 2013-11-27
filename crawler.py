@@ -203,7 +203,7 @@ def dl_xml(params):
 
 	# We're permitted to crawl any page with the API regardless
 	# of robots.txt since we're using the API
-	response = urllib2.urlopen(url)
+	response = urllib2.urlopen(url.encode("utf8"), timeout=5)
 
 	time.sleep(config.crawl_delay)
 	return response.read()
@@ -214,7 +214,7 @@ def dl_html(page):
 
 	# we should be able to crawl any page from the links we obtained
 	# and we're obeying crawling delays here
-	response = urllib2.urlopen(url.encode("utf8"))
+	response = urllib2.urlopen(url.encode("utf8"), timeout=5)
 
 	time.sleep(config.crawl_delay)
 	return response.read()
