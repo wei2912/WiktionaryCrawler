@@ -74,7 +74,7 @@ The default `config.py` looks like this:
 	# coding=utf8
 
 	start_cat = "Category:Mandarin language"
-	crawl_delay = 0.6 # in seconds
+	crawl_delay = 1 # in seconds
 	lang = "zh"
 	wiki_lang = "en"
 
@@ -106,7 +106,7 @@ The default value is `Category:Mandarin_language`. Adapt this to the language wh
 
 ## `crawl_delay`
 
-`crawl_delay` is the time the crawler waits before crawling the next page. A delay of 0.6 second or higher is required so as to prevent excessive load on the server. If the delay is set below 0.5 seconds, your crawler may be banned from accessing the server.
+`crawl_delay` is the time the crawler waits before crawling the next page. A delay of 1 second or higher is required so as to prevent excessive load on the server. If the delay is set below 1 second, your crawler may be banned from accessing the server.
 
 The crawl delay is in seconds.
 
