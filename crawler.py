@@ -205,7 +205,7 @@ def dl_xml(params):
 	# of robots.txt since we're using the API
 	response = urllib2.urlopen(url.encode("utf8"), timeout=5)
 
-	time.sleep(config.crawl_delay)
+	time.sleep(config.api_crawl_delay)
 	return response.read()
 
 def dl_html(page):
@@ -216,5 +216,5 @@ def dl_html(page):
 	# and we're obeying crawling delays here
 	response = urllib2.urlopen(url.encode("utf8"), timeout=5)
 
-	time.sleep(config.crawl_delay)
+	time.sleep(config.page_crawl_delay)
 	return response.read()

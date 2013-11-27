@@ -1,7 +1,8 @@
 # coding=utf8
 
 start_cat = "Category:Mandarin language"
-crawl_delay = 1 # in seconds
+api_crawl_delay = 1 # in seconds
+page_crawl_delay = 0.4 # in seconds
 lang = "zh"
 wiki_lang = "en"
 

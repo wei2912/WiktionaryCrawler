@@ -74,7 +74,8 @@ The default `config.py` looks like this:
 	# coding=utf8
 
 	start_cat = "Category:Mandarin language"
-	crawl_delay = 1 # in seconds
+	api_crawl_delay = 1 # in seconds
+	page_crawl_delay = 0.4 # in seconds
 	lang = "zh"
 	wiki_lang = "en"
 
@@ -104,9 +105,11 @@ The top comment, `# coding=utf8`, is required to set the encoding of the file so
 
 The default value is `Category:Mandarin_language`. Adapt this to the language which you wish to crawl. Remember to modify `lang` as well.
 
-## `crawl_delay`
+## `api_crawl_delay` and `page_crawl_delay`
 
-`crawl_delay` is the time the crawler waits before crawling the next page. A delay of 1 second or higher is required so as to prevent excessive load on the server. If the delay is set below 1 second, your crawler may be banned from accessing the server.
+`api_crawl_delay` is the time the crawler waits before sending a request to the API while `page_crawl_delay` is the time the crawler waits before crawling the next page. The default delays are fine and you should not set a value lower than the defaults.
+
+The default value of `api_crawl_delay` is 1 second as it is an API request whereas the default value of `page_crawl_delay` is 0.4 seconds as pages are cached.
 
 The crawl delay is in seconds.
 
