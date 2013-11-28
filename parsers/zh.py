@@ -50,6 +50,7 @@ def parse(page, htmldoc):
 	soup = strip_out_section(soup, htmldoc, "h2", "Mandarin", 1)
 	soup = strip_out_section(soup, htmldoc, "h3", "Romanization", 0)
 	soup = strip_out_section(soup, htmldoc, "h3", "Etymology", 0)
+	soup = strip_out_section(soup, htmldoc, "h3", "References", 0)
 
 	soup = format_headings(soup) # marks out sections
 	soup = format_ol(soup) # marks out english
