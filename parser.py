@@ -37,6 +37,7 @@ def parse(pages):
 	return spelings
 
 def parse_page(page):
+	dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
 	f = open(dirpath + page + ".html", 'r')
 	htmldoc = f.read()
 	f.close()
