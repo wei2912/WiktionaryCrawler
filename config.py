@@ -10,11 +10,12 @@ wiki_lang = "en"
 subcats_bl = [
 "Category:cmn.*",
 ".* derived from Mandarin",
-".* in (simplified|traditional) script"
+".* in (simplified|traditional) script",
+"Category:Requests.*",
+"Mandarin pinyin"
 ]
 pages_bl = [
-"Appendix:.*",
-"Template:.*"
+".*?:.*"
 ]
 
 ## lang-specific config vals ##

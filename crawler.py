@@ -19,33 +19,6 @@ def crawl_subcats():
 		subcats = [subcat for subcat in subcats if not config.subcat_bl(subcat)]
 		
 		misc.write_file(dirpath + "subcats.txt", subcats)
-
-	more_subcats = []
-
-	counter = 0
-	for subcat in subcats: # crawling a level deeper
-		counter += 1
-		pb.update(counter, len(subcats))
-		if counter == len(subcats):
-			break
-
-		subcat = subcats[counter-1]
-
-		subcat_dirpath = dirpath + subcat + "/"
-		misc.mkdir_p(subcat_dirpath)
-
-		filepath = subcat_dirpath + "subcats.txt"
-
-		if os.path.exists(filepath):
-			subcat_list = misc.read_file(filepath)
-		else:
-			subcat_list = get_subcats(subcat)
-			misc.write_file(filepath, subcats)
-
-		more_subcats.extend(subcat_list)
-
-	more_subcats = [subcat for subcat in more_subcats if not config.subcat_bl(subcat) and not subcat in subcats]
-	subcats.extend(more_subcats)
 	return subcats
 
 def crawl_pages(subcats):
