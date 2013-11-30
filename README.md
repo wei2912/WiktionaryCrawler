@@ -2,13 +2,13 @@ Refer to http://www.google-melange.com/gci/task/view/google/gci2013/559176099876
 
 # Dependencies
 
-	$ sudo pip install urlnorm BeautifulSoup4
+	$ sudo pip install urlnorm
 
 Depending on your language, you may need to install more dependencies.
 
 Here are the list of language specific dependencies:
 
-* **zh**: `sudo pip install mafan PyICU`
+* **zh**: `sudo pip install mafan BeautifulSoup4`
 
 # Running the crawler
 
