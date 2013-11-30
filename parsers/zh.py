@@ -36,6 +36,9 @@ def parse(page, htmldoc):
 	pinyin_regex4 = r"\((.+?)\)"
 	pinyin_regex4 = re.compile(pinyin_regex4)
 
+	citation_regex = r"\[\d\]"
+	citation_regex = re.compile(citation_regex)
+
 	soup = BeautifulSoup(htmldoc)
 	soup = take_out_edit(soup)
 
@@ -51,6 +54,7 @@ def parse(page, htmldoc):
 	soup = strip_out_section(soup, htmldoc, "h3", "Romanization", 0)
 	soup = strip_out_section(soup, htmldoc, "h3", "Etymology", 0)
 	soup = strip_out_section(soup, htmldoc, "h3", "References", 0)
+	soup = strip_out_section(soup, htmldoc, "h3", "Usage notes", 0)
 
 	soup = format_headings(soup) # marks out sections
 	soup = format_ol(soup) # marks out english
@@ -96,6 +100,7 @@ def parse(page, htmldoc):
 			pinyin = pinyin.replace(" or ", ", ")
 		elif line.startswith("* "): # found english
 			english = line[2:].encode("utf8")
+			english = citation_regex.sub("", english)
 
 			if not pinyin:
 				pinyin = "none"
