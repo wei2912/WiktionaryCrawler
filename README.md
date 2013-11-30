@@ -10,6 +10,12 @@ Here are the list of language specific dependencies:
 
 * **zh**: `sudo pip install mafan PyICU`
 
+# Running the crawler
+
+	$ python main.py
+
+That's... all you have to do. All configuration is done in `config.py`.
+
 # Stages
 
 The crawler goes through 5 stages.
