@@ -27,7 +27,8 @@ def main():
 
 	# stage 5 - write to file
 	print("** Stage 5: Writing final results to file. **")
-	f = open("data/%s-speling.txt" % config.lang, "w")
+	filepath = "data/%s-speling.txt" % config.lang
+	f = open(filepath, "w")
 	for speling in spelings:
 		f.write(speling + "\n")
 	f.close()
@@ -37,6 +38,7 @@ def main():
 	print("=== STATS ===")
 	print("Crawled %d pages" % len(pages))
 	print("Obtained %d spelings" % len(spelings))
+	print("Wrote spelings to %s" % filepath)
 	print("=============")
 
 main()
