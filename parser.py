@@ -9,8 +9,8 @@ import time
 def parse(pages):
 	spelings = []
 
-	speling_dirpath = "data/speling/%s/%s/" % (config.wiki_lang, config.start_cat)
-	pages_dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
+	speling_dirpath = "data/speling/%s/" % config.start_cat
+	pages_dirpath = "data/pages/%s/" % config.start_cat
 	counter = 0
 
 	for page in pages:
@@ -37,7 +37,7 @@ def parse(pages):
 	return spelings
 
 def parse_page(page):
-	dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
+	dirpath = "data/pages/%s/" % config.start_cat
 	f = open(dirpath + page + ".html", 'r')
 	htmldoc = f.read()
 	f.close()

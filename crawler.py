@@ -9,20 +9,20 @@ from collections import OrderedDict
 import sys
 
 def crawl_subcats():
-	dirpath = "data/site/%s/%s/" % (config.wiki_lang, config.start_cat)
+	dirpath = "data/site/%s/" % config.start_cat
 	filepath = dirpath + "%s/subcats.txt"
 
 	if os.path.exists(filepath):
 		subcats = misc.read_file(filepath)
 	else:
 		subcats = get_subcats(config.start_cat)
-		subcats = [subcat for subcat in subcats if not config.subcat_bl(subcat)]
+		subcats = [subcat for subcat in subcats if lang.can_subcat(subcat)]
 		
 		misc.write_file(dirpath + "subcats.txt", subcats)
 	return subcats
 
 def crawl_pages(subcats):
-	dirpath = "data/site/%s/%s/" % (config.wiki_lang, config.start_cat)
+	dirpath = "data/site/%s/" % config.start_cat
 	pages = []
 
 	counter = 0
@@ -42,12 +42,12 @@ def crawl_pages(subcats):
 
 		pages.extend(subcat_pages)
 
-	pages = [page for page in pages if not config.page_bl(page) and lang.can(page)]
+	pages = [page for page in pages if lang.can_page(page)]
 	pages = OrderedDict.fromkeys(pages).keys() # unique
 	return pages
 
 def crawl_all_pages(pages):
-	dirpath = "data/pages/%s/%s/" % (config.wiki_lang, config.start_cat)
+	dirpath = "data/pages/%s/" % config.start_cat
 
 	counter = 0
 	for page in pages:
@@ -169,7 +169,7 @@ def dl_pages_xml(subcat, cmcontinue):
 			"cmlimit": "500"})
 
 def dl_xml(params):
-	url = "http://%s.wiktionary.org/w/api.php?format=xml" % config.wiki_lang
+	url = "http://en.wiktionary.org/w/api.php?format=xml"
 	for key, val in params.iteritems():
 		url += "&%s=%s" % (key, val)
 	url = urlnorm.norm(url)
@@ -182,7 +182,7 @@ def dl_xml(params):
 	return response.read()
 
 def dl_html(page):
-	url = "http://%s.wiktionary.org/wiki/%s" % (config.wiki_lang, page)
+	url = "http://en.wiktionary.org/wiki/%s" % page
 	url = urlnorm.norm(url)
 
 	# we should be able to crawl any page from the links we obtained

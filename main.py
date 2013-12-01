@@ -5,11 +5,9 @@ import config, misc, crawler, parser
 from collections import OrderedDict
 
 def main():
-	misc.mkdir_p("data/site/%s/%s/" % (config.wiki_lang, config.start_cat))
-	misc.mkdir_p("data/pages/%s/%s/" % (config.wiki_lang, config.start_cat))
-	misc.mkdir_p("data/speling/%s/%s/" % (config.wiki_lang, config.start_cat))
-
-	config.init_config()
+	misc.mkdir_p("data/site/%s/" % config.start_cat)
+	misc.mkdir_p("data/pages/%s/" % config.start_cat)
+	misc.mkdir_p("data/speling/%s/" % config.start_cat)
 
 	# stage 1 - obtaining list of subcategories
 	print("** Stage 1: Obtaining list of subcategories to crawl. **")

@@ -5,16 +5,28 @@ import config
 from mafan import simplify, tradify
 import re
 
-def can(page):
-	# stage 1: simplified or traditional
+def can_page(page):
+	# stage 1: match filter regex
+	filter_regex = ".*?:.*"
+	filter_regex = re.compile(filter_regex)
+	if filter_regex.match(page):
+		return False
+
+	# stage 2: simplified or traditional
 	if not can_st(page):
 		return False
 
-	# stage 2: pinyin
+	# stage 3: pinyin
 	if is_pinyin(page):
 		return False
 
 	return True
+
+def can_subcat(subcat):
+	# stage 1: match filter regex
+	filter_regex = "Category:(cmn:.*|Mandarin pinyin)"
+	filter_regex = re.compile(filter_regex)
+	return not filter_regex.match(subcat)
 
 def can_st(page):
 	simplified = simplify(page) == page.decode("utf8")

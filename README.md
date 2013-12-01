@@ -59,6 +59,8 @@ At stage 2, pages can be filtered out by plugins based on language. Here is the 
 * **zh.py** - Chinese (simplified and traditional)
 	* Pages are filtered out based on whether the word is simplified, traditional or both.
 	* This can be set in `config.py`.
+* **th.py** - Thai
+	* Nothing to see here, move on.
 
 Filters are stored in `filters/`. Every filter has a test suite which goes by the filename `filter_test.py`. This test suite can be runned to check if the filter has any errors.
 
@@ -68,6 +70,8 @@ At stage 4, pages are parsed based on language. Here is the list of parsers:
 
 * **zh.py** - Chinese (simplified and traditional)
 	* Parses pages into the following format: `word ; POS tag ; pinyin ; gloss (meaning)`
+* **th.py** - Thai
+	* Parses pages into the following format: `word ; romanised ; pinyin ; gloss (meaning)`
 
 The parser is automatically selected based on the language set in `config.py`. More information can be found at [General Config](https://github.com/wei2912/WiktionaryCrawler#general-config)
 
@@ -83,13 +87,6 @@ The default `config.py` looks like this:
 	api_crawl_delay = 1 # in seconds
 	page_crawl_delay = 0.4 # in seconds
 	lang = "zh"
-	wiki_lang = "en"
-
-	# blacklists
-	subcats_bl = []
-	pages_bl = [
-	"Appendix:.*"
-	]
 
 	## lang-specific config vals ##
 	.
@@ -127,35 +124,6 @@ The default value is `zh`. The following languages are supported:
 
 * **zh**
 
-## `wiki_lang`
-
-`wiki_lang` is the language code which will determine which language of Wiktionary will the program crawl from.
-
-The default value is `en`.
-
-***Note: If you change this to another value, there is no guarantee that the parser will work correctly. If you wish to obtain gloss in another language, please use a translator instead.***
-
-## `subcats_bl`
-
-`subcats_bl` is a list of regular expressions which can be used to match subcategories that should be blacklisted.
-
-By default, the following subcats are blacklisted:
-
-* Category:cmn.*
-* .* derived from Mandarin
-* .* in (simplified|traditional) script
-
-Note that this is specific to Chinese.
-
-## `pages_bl`
-
-`pages_bl` is a list of regular expressions which can be used to match pages that should be blacklisted.
-
-By default, the following pages are blacklisted:
-
-* `Appendix:.*`
-* `Template:.*`
-
 ## Language specific configuration values
 
 The default configuration values parse simplified Chinese text. If you wish to parse another language, please comment out these values and look for your language, then uncomment those config values.
@@ -170,3 +138,7 @@ These values are available:
 * `zh_t`: Set to `True` if you wish to crawl only traditional words.
 
 Words that are both simplified and traditional will always be parsed if either `zh_s` or `zh_t` is set to `True`.
+
+### **th** - Thai
+
+Nothing to see here, move on.
