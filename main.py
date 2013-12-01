@@ -27,7 +27,7 @@ def main():
 
 	# stage 5 - write to file
 	print("** Stage 5: Writing final results to file. **")
-	f = open("data/speling.txt", "w")
+	f = open("data/%s-speling.txt" % config.lang, "w")
 	for speling in spelings:
 		f.write(speling + "\n")
 	f.close()
