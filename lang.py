@@ -6,6 +6,9 @@ if config.lang == "zh":
 elif config.lang == "th":
 	from filters import th as filter
 	from parsers import th as parser
+elif config.lang == "lo":
+	from filters import lo as filter
+	from parsers import lo as parser
 ## the list goes on
 
 def can_page(page):

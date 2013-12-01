@@ -3,9 +3,7 @@
 import config
 
 import re
-from bs4 import BeautifulSoup, NavigableString
-from collections import OrderedDict
-from mafan import text
+from bs4 import BeautifulSoup
 
 def parse(page, htmldoc):
 	spelings = []
@@ -73,6 +71,7 @@ def parse(page, htmldoc):
 
 def shortify(postag):
 	shortify_tags = {
+	"abbreviation": "abbrv",
 	"adjective": "adj",
 	"adverb": "adv",
 	"conjunction": "cnj",

@@ -3,8 +3,7 @@
 import config
 
 import re
-from bs4 import BeautifulSoup, NavigableString
-from collections import OrderedDict
+from bs4 import BeautifulSoup
 from mafan import text
 
 def parse(page, htmldoc):
