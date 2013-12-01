@@ -106,7 +106,10 @@ The top comment, `# coding=utf8`, is required to set the encoding of the file so
 
 `start_cat` is the category where the crawler begins crawling for sub-categories.
 
-The default value is `Category:Mandarin_language`. Adapt this to the language which you wish to crawl. Remember to modify `lang` as well.
+Here are the following values for different languages:
+
+* **zh** `Category:Mandarin language`
+* **th** `Category:Thai parts of speech`
 
 ## `api_crawl_delay` and `page_crawl_delay`
 
@@ -120,9 +123,10 @@ The crawl delay is in seconds.
 
 `lang` is the language code which will determine the [parser](https://github.com/wei2912/WiktionaryCrawler#parsers) and [filter](https://github.com/wei2912/WiktionaryCrawler#filters) which the program will use.
 
-The default value is `zh`. The following languages are supported:
+The following languages are supported:
 
-* **zh**
+* **zh** - Chinese (simplified and traditional)
+* **th** - Thai
 
 ## Language specific configuration values
 
