@@ -4,6 +4,7 @@ import config
 
 import re
 from bs4 import BeautifulSoup
+from collections import OrderedDict
 
 def parse(page, htmldoc):
 	spelings = []
