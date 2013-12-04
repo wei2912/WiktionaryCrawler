@@ -8,7 +8,9 @@ Depending on your language, you may need to install more dependencies.
 
 Here are the list of language specific dependencies:
 
-* **zh**: `sudo pip install mafan BeautifulSoup4`
+* **zh** (Chinese, simplified and traditional): `sudo pip install mafan BeautifulSoup4`
+* **th** (Thai): `sudo pip install BeautifulSoup4`
+* **lo** (Lao): `sudo pip install BeautifulSoup4`
 
 # Running the crawler
 
