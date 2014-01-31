@@ -129,6 +129,7 @@ The following languages are supported:
 
 * **zh** - Chinese (simplified and traditional)
 * **th** - Thai
+* **lo** - Lao
 
 ## Language specific configuration values
 
@@ -146,5 +147,9 @@ These values are available:
 Words that are both simplified and traditional will always be parsed if either `zh_s` or `zh_t` is set to `True`.
 
 ### **th** - Thai
+
+Nothing to see here, move on.
+
+### **lo** - Lao
 
 Nothing to see here, move on.
