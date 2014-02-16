@@ -1,4 +1,4 @@
-[![tip for next commit](http://tip4commit.com/projects/510.svg)](http://tip4commit.com/projects/510)
+# WiktionaryCrawler
 
 This crawler was written to parse Wiktionary pages (which tend to be a mess, sadly) into the [speling format](http://wiki.apertium.org/wiki/Speling_format), which can be used by programs which require these wordlists.
 
