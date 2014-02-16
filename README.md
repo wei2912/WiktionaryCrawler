@@ -4,6 +4,12 @@ This crawler was written to parse Wiktionary pages (which tend to be a mess, sad
 
 Refer to [http://www.google-melange.com/gci/task/view/google/gci2013/5591760998760448](http://www.google-melange.com/gci/task/view/google/gci2013/5591760998760448) for more details.
 
+# Donations
+
+![Litecoin Donations](http://i.imgur.com/nblF32M.png)
+
+Thank you for your donations!
+
 # Dependencies
 
 	$ sudo pip install urlnorm
