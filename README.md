@@ -2,14 +2,6 @@
 
 This crawler was written to parse Wiktionary pages (which tend to be a mess, sadly) into the [speling format](http://wiki.apertium.org/wiki/Speling_format), which can be used by programs which require these wordlists.
 
-Refer to [http://www.google-melange.com/gci/task/view/google/gci2013/5591760998760448](http://www.google-melange.com/gci/task/view/google/gci2013/5591760998760448) for more details.
-
-# Donations
-
-![Litecoin Donations](http://i.imgur.com/nblF32M.png)
-
-Thank you for your donations!
-
 # Dependencies
 
 	$ sudo pip install urlnorm
@@ -26,7 +18,7 @@ Here are the list of language specific dependencies:
 
 	$ python main.py
 
-That's... all you have to do. All configuration is done in `config.py`.
+That's all you have to do. All configuration is done in `config.py`.
 
 # General config
 
